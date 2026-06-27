@@ -7,6 +7,7 @@ mushroom_app = FastAPI()
 
 model = joblib.load('model_mushroom.pkl')
 scaler = joblib.load('scaler_mushroom.pkl')
+mapping = joblib.load('1_0_mushroom.pkl')
 
 class MushroomFeatures(BaseModel):
     cap_shape: str
@@ -29,21 +30,21 @@ class MushroomFeatures(BaseModel):
 @mushroom_app.post('/predict')
 async def predict_mushroom(mushroom: MushroomFeatures):
     features = [
-        0 if mushroom.cap_shape == 'x' else 1 if mushroom.cap_shape == 'b' else 2 if mushroom.cap_shape == 's' else 3 if mushroom.cap_shape == 'f' else 4 if mushroom.cap_shape == 'k' else 5,
-        0 if mushroom.cap_surface == 's' else 1 if mushroom.cap_surface == 'y' else 2 if mushroom.cap_surface == 'f' else 3,
-        0 if mushroom.cap_color == 'n' else 1 if mushroom.cap_color == 'y' else 2 if mushroom.cap_color == 'w' else 3 if mushroom.cap_color == 'g' else 4 if mushroom.cap_color == 'e' else 5 if mushroom.cap_color == 'p' else 6 if mushroom.cap_color == 'b' else 7 if mushroom.cap_color == 'u' else 8 if mushroom.cap_color == 'c' else 9,
-        0 if mushroom.bruises == 't' else 1,
-        0 if mushroom.odor == 'p' else 1 if mushroom.odor == 'a' else 2 if mushroom.odor == 'l' else 3 if mushroom.odor == 'n' else 4 if mushroom.odor == 'f' else 5 if mushroom.odor == 'c' else 6 if mushroom.odor == 'y' else 7 if mushroom.odor == 's' else 8,
-        0 if mushroom.gill_attachment == 'f' else 1,
-        0 if mushroom.gill_spacing == 'c' else 1,
-        0 if mushroom.gill_size == 'n' else 1,
-        0 if mushroom.gill_color == 'k' else 1 if mushroom.gill_color == 'n' else 2 if mushroom.gill_color == 'g' else 3 if mushroom.gill_color == 'p' else 4 if mushroom.gill_color == 'w' else 5 if mushroom.gill_color == 'h' else 6 if mushroom.gill_color == 'u' else 7 if mushroom.gill_color == 'e' else 8 if mushroom.gill_color == 'b' else 9 if mushroom.gill_color == 'r' else 10 if mushroom.gill_color == 'y' else 11,
-        0 if mushroom.stalk_shape == 'e' else 1,
-        0 if mushroom.stalk_root == 'e' else 1 if mushroom.stalk_root == 'c' else 2 if mushroom.stalk_root == 'b' else 3 if mushroom.stalk_root == 'r' else 4,
-        0 if mushroom.ring_type == 'p' else 1 if mushroom.ring_type == 'e' else 2 if mushroom.ring_type == 'l' else 3 if mushroom.ring_type == 'f' else 4,
-        0 if mushroom.spore_print_color == 'k' else 1 if mushroom.spore_print_color == 'n' else 2 if mushroom.spore_print_color == 'u' else 3 if mushroom.spore_print_color == 'h' else 4 if mushroom.spore_print_color == 'w' else 5 if mushroom.spore_print_color == 'r' else 6 if mushroom.spore_print_color == 'o' else 7 if mushroom.spore_print_color == 'y' else 8,
-        0 if mushroom.population == 's' else 1 if mushroom.population == 'n' else 2 if mushroom.population == 'a' else 3 if mushroom.population == 'v' else 4 if mushroom.population == 'y' else 5,
-        0 if mushroom.habitat == 'u' else 1 if mushroom.habitat == 'g' else 2 if mushroom.habitat == 'm' else 3 if mushroom.habitat == 'd' else 4 if mushroom.habitat == 'p' else 5 if mushroom.habitat == 'w' else 6,
+        mapping['cap-shape'][mushroom.cap_shape],
+        mapping['cap-surface'][mushroom.cap_surface],
+        mapping['cap-color'][mushroom.cap_color],
+        mapping['bruises'][mushroom.bruises],
+        mapping['odor'][mushroom.odor],
+        mapping['gill-attachment'][mushroom.gill_attachment],
+        mapping['gill-spacing'][mushroom.gill_spacing],
+        mapping['gill-size'][mushroom.gill_size],
+        mapping['gill-color'][mushroom.gill_color],
+        mapping['stalk-shape'][mushroom.stalk_shape],
+        mapping['stalk-root'][mushroom.stalk_root],
+        mapping['ring-type'][mushroom.ring_type],
+        mapping['spore-print-color'][mushroom.spore_print_color],
+        mapping['population'][mushroom.population],
+        mapping['habitat'][mushroom.habitat],
     ]
 
     scaled = scaler.transform([features])
